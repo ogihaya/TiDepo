@@ -55,6 +55,14 @@ docs/       # ドキュメント
 - フロントエンド: `npm run lint` → `npm run typecheck` → `npm test`（Vitest）→ `npm run build`。
 - CI（GitHub Actions）で上記を自動実行する（Phase 0 手順 0-6 で構築）。
 
+## バックエンド規約（Phase 0-2 で確定）
+
+- Java 21 / Spring Boot 4.x / Gradle（Kotlin DSL）。ベースパッケージ `com.tidepo`。
+- 単一モジュール構成。オニオンの層はパッケージで表現し、依存方向は ArchUnit（`OnionArchitectureTest`）で検証する。
+- 整形は Spotless + palantir-java-format（4スペース。`.editorconfig` の Java=4 と整合）。Checkstyle はフォーマット系を持たせず最小ルールのみ。
+- ドメイン層は他層・外部フレームワークに依存しない（純粋ロジック）。
+- 詳細は [`backend/README.md`](./backend/README.md) を参照。
+
 ## 補助ツール
 
 `.claude/` に開発フロー用の skill / agent を用意している（設計→分解→計画→実装→commit→PR→レビュー→merge→Issue完了）。
