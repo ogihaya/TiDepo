@@ -1,2 +1,26 @@
+# プロジェクト固有
 docs/private
 .claude/settings.local.json
+
+# 環境ファイル
+.env
+.env.*
+!.env.example
+
+# Backend (Gradle)
+backend/.gradle/
+backend/build/
+
+# Frontend (Node)
+frontend/node_modules/
+frontend/dist/
+frontend/coverage/
+
+# Infra (AWS CDK)
+infra/node_modules/
+infra/cdk.out/
+
+# OS / IDE
+.DS_Store
+.idea/
+*.iml
