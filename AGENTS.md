@@ -63,6 +63,15 @@ docs/       # ドキュメント
 - ドメイン層は他層・外部フレームワークに依存しない（純粋ロジック）。
 - 詳細は [`backend/README.md`](./backend/README.md) を参照。
 
+## フロントエンド規約（Phase 0-3 で確定）
+
+- TypeScript / React 19 / Vite 8。パッケージ管理は npm。パスエイリアス `@/*` → `src/*`。
+- FSD（app/pages/widgets/features/entities/shared）。各レイヤーは `index.ts`（public API）経由で公開。
+- 依存方向（app→pages→widgets→features→entities→shared の一方通行）は ESLint の eslint-plugin-boundaries で強制（`@` エイリアス解決のため eslint-import-resolver-typescript を併用）。
+- 整形は Prettier（eslint-config-prettier で ESLint と非競合）。Lint は ESLint flat config。
+- テストは Vitest ＋ React Testing Library（jsdom）。
+- 詳細は [`frontend/README.md`](./frontend/README.md) を参照。
+
 ## 補助ツール
 
 `.claude/` に開発フロー用の skill / agent を用意している（設計→分解→計画→実装→commit→PR→レビュー→merge→Issue完了）。
