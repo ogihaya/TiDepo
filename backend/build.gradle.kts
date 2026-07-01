@@ -21,6 +21,8 @@ repositories {
 
 dependencies {
   implementation("org.springframework.boot:spring-boot-starter-webmvc")
+  // 開発時のみ有効。ソース再コンパイル時に bootRun を自動再起動する（Docker 開発向け）
+  developmentOnly("org.springframework.boot:spring-boot-devtools")
   testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
   testImplementation("com.tngtech.archunit:archunit-junit5:1.4.1")
   testRuntimeOnly("org.junit.platform:junit-platform-launcher")

@@ -1,0 +1,15 @@
+# 開発用イメージ。依存をインストールし、Vite dev server を起動する。
+# ソースは docker compose の bind mount で供給、node_modules は名前なしボリュームで保持する。
+# 本番用の静的配信イメージ（nginx 等）は Phase 7。
+FROM node:22
+
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+# 開発用イメージのため npm install を使う（macOS 生成の lock だと Linux 固有の
+# optional 依存が食い違い npm ci が失敗するため）。厳格な npm ci は CI/本番(Linux)で用いる。
+RUN npm install
+
+EXPOSE 5173
+
+CMD ["npm", "run", "dev", "--", "--host"]

@@ -1,0 +1,49 @@
+# 開発用 docker compose。`cp .env.example .env` 後に `docker compose up` で起動する。
+# postgres / backend / frontend の3サービスを立ち上げ、frontend はホットリロード、
+# /api は backend へプロキシする。本番用構成は Phase 7 で別途用意する。
+
+services:
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      # ホスト側ポートは .env で変更可能（ローカルに別 PostgreSQL がある場合の衝突回避）
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    command: ["./gradlew", "bootRun"]
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./backend:/app
+      - backend-gradle-cache:/root/.gradle
+    # backend の DB 接続は手順 0-5 で実装する（現時点では postgres に依存しない）
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    command: ["npm", "run", "dev", "--", "--host"]
+    environment:
+      # Docker の bind mount 上で HMR を確実に効かせるため polling を有効化
+      VITE_USE_POLLING: "true"
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      # ホストの node_modules で上書きされないよう、コンテナ側を名前なしボリュームで保持
+      - /app/node_modules
+    depends_on:
+      - backend
+
+volumes:
+  postgres-data:
+  backend-gradle-cache:
