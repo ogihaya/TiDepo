@@ -33,6 +33,20 @@ infra/      # AWS CDK（TypeScript）
 docs/       # ドキュメント（requirements.md ほか）
 ```
 
+## Docker で起動（開発用）
+
+```bash
+cp .env.example .env          # 初回のみ（.env はコミットしない）
+docker compose up --build     # postgres / backend / frontend を起動
+```
+
+- フロントエンド: http://localhost:5173 （Vite dev server・ホットリロード）
+- バックエンド: http://localhost:8080 （例: http://localhost:8080/api/health）
+- フロントの `/api/*` は Vite proxy 経由で backend に転送される。
+- 停止は `docker compose down`（DB データは `postgres-data` ボリュームに保持）。
+
+> backend の DB 接続は手順 0-5 で実装予定。現時点では postgres は起動するが backend からは未接続。
+
 ## 開発の進め方
 
 - 要件のソース・オブ・トゥルースは [`docs/requirements.md`](./docs/requirements.md)。

@@ -1,0 +1,9 @@
+# 開発用イメージ。ソースは docker compose の bind mount で供給し、
+# ./gradlew bootRun でアプリを起動する（本番用のマルチステージイメージは Phase 7）。
+FROM eclipse-temurin:21-jdk
+
+WORKDIR /app
+
+EXPOSE 8080
+
+CMD ["./gradlew", "bootRun"]
