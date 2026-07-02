@@ -1,3 +1,15 @@
 spring:
   application:
     name: tidepo
+  datasource:
+    # ローカル直起動用の既定値。Docker では compose の環境変数で上書きする。
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/tidepo}
+    username: ${SPRING_DATASOURCE_USERNAME:tidepo}
+    password: ${SPRING_DATASOURCE_PASSWORD:tidepo_dev_password}
+  jpa:
+    hibernate:
+      # スキーマは Flyway が所有。JPA はエンティティとスキーマの一致を検証するのみ。
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    enabled: true
