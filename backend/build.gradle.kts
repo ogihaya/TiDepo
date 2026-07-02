@@ -21,10 +21,26 @@ repositories {
 
 dependencies {
   implementation("org.springframework.boot:spring-boot-starter-webmvc")
+  implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+  // マイグレーション（Flyway がスキーマを所有し、JPA は検証のみ ddl-auto=validate）
+  // Spring Boot 4 は autoconfig がモジュール分割されており、Flyway の自動設定は
+  // spring-boot-flyway モジュールに入る（flyway-core だけでは有効化されない）
+  implementation("org.springframework.boot:spring-boot-flyway")
+  implementation("org.flywaydb:flyway-core")
+  implementation("org.flywaydb:flyway-database-postgresql")
+  // 変更履歴（監査）
+  implementation("org.hibernate.orm:hibernate-envers")
+  runtimeOnly("org.postgresql:postgresql")
   // 開発時のみ有効。ソース再コンパイル時に bootRun を自動再起動する（Docker 開発向け）
   developmentOnly("org.springframework.boot:spring-boot-devtools")
   testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
   testImplementation("com.tngtech.archunit:archunit-junit5:1.4.1")
+  // Testcontainers（テスト時に使い捨ての本物 PostgreSQL を Docker で起動）
+  // Spring Boot 4 の BOM は testcontainers を管理しないため、Testcontainers BOM を import する
+  testImplementation(platform("org.testcontainers:testcontainers-bom:1.21.3"))
+  testImplementation("org.springframework.boot:spring-boot-testcontainers")
+  testImplementation("org.testcontainers:junit-jupiter")
+  testImplementation("org.testcontainers:postgresql")
   testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 

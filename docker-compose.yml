@@ -14,18 +14,31 @@ services:
       - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      # backend が接続する前に PostgreSQL の受付開始を待たせるための死活監視
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile.dev
     command: ["./gradlew", "bootRun"]
+    environment:
+      # コンテナ間はサービス名 postgres:5432 で接続（ホスト側ポート変更の影響を受けない）
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "8080:8080"
     volumes:
       - ./backend:/app
       - backend-gradle-cache:/root/.gradle
-    # backend の DB 接続は手順 0-5 で実装する（現時点では postgres に依存しない）
+    depends_on:
+      postgres:
+        condition: service_healthy
 
   frontend:
     build:
